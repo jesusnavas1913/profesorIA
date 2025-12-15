@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3000,
         host: '0.0.0.0',
+        // Permitido por Render para el hostname de producción
+        allowedHosts: ['profesoria.onrender.com'],
       },
       plugins: [react()],
       define: {
