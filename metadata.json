@@ -1,0 +1,5 @@
+{
+  "name": "CodeMaster AI: HTML Tutor",
+  "description": "An interactive, gamified HTML learning platform where an AI Tutor guides users through a 'Learn - Practice - Verify' cycle. Features a real-time code editor, visual curriculum map, and Gemini-powered code validation.",
+  "requestFramePermissions": []
+}

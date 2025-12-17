@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Fix para evitar 404 del favicon -->
+  <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+  <title>CodeMaster AI - Aprende HTML</title>
+
+  <!-- Fonts: Plus Jakarta Sans (UI) & JetBrains Mono (Code) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap"
+    rel="stylesheet">
+
+
+  <style>
+    /* Custom scrollbar for code editor */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #0f172a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      background-color: #020617;
+    }
+
+    /* Disable selection in non-editor areas to feel app-like */
+    .no-select {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+  </style>
+
+  <link rel="stylesheet" href="/index.css">
+</head>
+
+<body class="bg-dark text-white font-sans antialiased overflow-x-hidden">
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
