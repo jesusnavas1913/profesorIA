@@ -24,9 +24,14 @@ export const validateCodeWithGemini = async (
       Tone: Natural, confident, slightly witty, Encouraging but precise. NOT ROBOTIC.
       
       Task: "${taskInstruction}"
-      Code: "${userCode}"
+
+      Code:
+      \`\`\`html
+${userCode}
+      \`\`\`
 
       CRITICAL VALIDATION RULES:
+      0. **DO NOT MODIFY OR CENSOR:** Do NOT alter, remove, or censor any text inside the user's code. Evaluate the code "as-is" and never change or strip content from it.
       1. **STRUCTURE FIRST:** Focus 99% on valid HTML syntax (opening/closing tags, correct nesting, correct tag name).
       2. **MOBILE FIRST MINDSET:** If the task involves structure, the <meta name="viewport"> tag is MANDATORY. If the task involves inputs, check if they used specific types (email/tel) over simple 'text' if requested.
       3. **IGNORE TEXT CONTENT:** If the task asks for an <h1> about "Philosophy" and the user writes <h1>Hello World</h1>, MARK IT CORRECT. The specific text inside tags DOES NOT MATTER.

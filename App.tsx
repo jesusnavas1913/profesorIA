@@ -117,7 +117,7 @@ export default function App() {
     const [profMood, setProfMood] = useState<'neutral' | 'happy' | 'thinking' | 'waiting' | 'explaining'>('neutral');
     const [feedback, setFeedback] = useState<GeminiFeedback | null>(null);
     const [activeTab, setActiveTab] = useState<'code' | 'preview'>('code');
-    const [warningMsg, setWarningMsg] = useState<string | null>(null); // For Anti-Paste
+    // (Removed anti-paste warning state)
 
     const [isSpeaking, setIsSpeaking] = useState(false);
     const synth = useRef<SpeechSynthesis | null>(null);
@@ -163,17 +163,14 @@ export default function App() {
         synth.current?.speak(utterance);
     };
 
-    // --- ANTI-PASTE SECURITY ---
+    // --- PASTE HANDLER ---
     const handlePaste = (e: React.ClipboardEvent) => {
-        e.preventDefault();
-        playSound('denied');
-        setWarningMsg("¡Sin atajos! Escribe para aprender.");
-
-        // Clear warning after 3 seconds
-        setTimeout(() => {
-            setWarningMsg(null);
-        }, 3000);
-    };
+        // Allow pasting raw text into the editor so students can paste examples or their own code.
+        // Do not block or alter clipboard content; let the browser insert it naturally in the textarea.
+        // Play a soft click sound to acknowledge the action.
+        playSound('click');
+        // NOTE: We intentionally do NOT call e.preventDefault() so paste behaves normally.
+    }; 
 
     const startModule = async (moduleId: number) => {
         const mod = modules.find(m => m.id === moduleId);
@@ -365,8 +362,7 @@ export default function App() {
                 xp={userState.xp}
             />
 
-            {/* Toast Notification */}
-            <Toast message={warningMsg || ''} show={!!warningMsg} />
+            {/* Paste is allowed — no warning toast shown */}
 
             <main className="flex-grow pt-16 flex flex-col md:flex-row h-full overflow-hidden relative">
 
@@ -430,7 +426,7 @@ export default function App() {
                             <textarea
                                 value={currentCode}
                                 onChange={(e) => { setCurrentCode(e.target.value); playSound('click'); }}
-                                onPaste={handlePaste} // BLOCKED PASTE
+                                onPaste={handlePaste} // Pegar permitido
                                 disabled={learningStep === 'success' || learningStep === 'verifying'}
                                 className={`
                             w-full h-full bg-[#0b1121] text-indigo-100 font-mono text-sm p-4 pl-12 resize-none focus:outline-none leading-6 
@@ -441,8 +437,11 @@ export default function App() {
                                 autoCapitalize="none"
                                 autoComplete="off"
                                 autoCorrect="off"
-                                placeholder="<!-- Escribe tu código aquí... -->"
+                                placeholder="<!-- Escribe o pega tu código aquí... -->"
                             />
+
+                            {/* Nota: pegar está permitido */}
+                            <div className="absolute left-12 right-6 bottom-4 text-xs text-gray-400 md:static md:mt-2 px-2">Puedes pegar código aquí libremente — la IA no modificará tu contenido.</div>
                         </div>
 
                         {/* FAB Mobile */}
