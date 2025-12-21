@@ -1,8 +1,17 @@
-
 export enum ModuleStatus {
   LOCKED = 'locked',
   ACTIVE = 'active',
   COMPLETED = 'completed',
+}
+
+export interface LessonStep {
+  id: string;
+  tag: string;
+  title: string;
+  explanation: string;
+  instruction: string;
+  exampleSnippet: string; // Demostración visual para el alumno
+  xpReward: number;
 }
 
 export interface ModuleData {
@@ -10,19 +19,14 @@ export interface ModuleData {
   title: string;
   description: string;
   status: ModuleStatus;
+  steps: LessonStep[];
   theory: {
     text: string; 
-    exampleCode: string; // The "Anatomy" code with comments
-    cleanCode: string;   // NEW: The "Pure" code without comments
+    exampleCode: string;
+    cleanCode: string;
     visualIcon: string; 
-    // NEW EDUCATIONAL FIELDS
-    historyFact?: string; // "Did you know?" context
-    proTip?: string; // SEO/Accessibility tip
-  };
-  task: {
-    instruction: string;
-    initialCode: string;
-    commonPitfall?: string; // Warning about common mistakes
+    historyFact?: string;
+    proTip?: string;
   };
   xpReward: number;
 }
@@ -34,7 +38,9 @@ export interface GeminiFeedback {
 }
 
 export interface UserState {
+  username: string | null;
   currentModuleId: number | null;
+  currentStepIndex: number;
   xp: number;
   completedModules: number[];
   streak: number;

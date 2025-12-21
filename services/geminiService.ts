@@ -1,65 +1,53 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { GeminiFeedback } from "../types";
 
-// Removed global initialization to prevent crash on import
-// const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const validateCodeWithGemini = async (
   taskInstruction: string,
   userCode: string,
-  // NEW: We pass the theory so the AI knows strictly what the user knows
   context: {
     moduleTitle: string;
     theoryText: string;
   }
 ): Promise<GeminiFeedback> => {
-  if (!import.meta.env.VITE_API_KEY) {
-    console.error("API Key is missing");
+  if (!process.env.API_KEY) {
     return {
       correct: false,
-      message: "Mi conexión está inestable. Revisa tu clave de acceso.",
-      tips: ["Verifica el archivo .env"]
+      message: "Enlace neuronal perdido (API Key ausente).",
+      tips: ["Conecta tu llave API"]
     };
   }
 
-  const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
-
   try {
     const prompt = `
-      You are CodeMaster Cortex, an empathetic coding tutor for beginners.
+      Eres Cortex v2.5, el Tutor Maestro y Arquitecto Jefe de Software. Tu enfoque es la PEDAGOGÍA EXTREMA.
+      
+      MISIÓN ACTUAL: "${taskInstruction}"
+      CONTEXTO TEÓRICO: "${context.theoryText}"
+      
+      CÓDIGO DEL APRENDIZ:
+      \`\`\`html
+      ${userCode}
+      \`\`\`
 
-      CURRENT LEVEL: "${context.moduleTitle}"
-      WHAT THE STUDENT JUST LEARNED (THEORY): "${context.theoryText}"
-      MISSION TASK: "${taskInstruction}"
-      STUDENT CODE: "${userCode}"
+      ### PROTOCOLO DE TUTORÍA:
+      1. **ANÁLISIS PEDAGÓGICO:** No solo busques errores, busca comprensión. Si el aprendiz olvidó cerrar una etiqueta, explícale que HTML funciona como una "caja": si no la cierras, el contenido se desparrama.
+      2. **SIMPLICIDAD PARA PRINCIPIANTES:** Estamos enseñando desde cero. No exijas atributos avanzados a menos que la misión lo pida.
+      3. **CONEXIÓN WEB:** Explica brevemente cómo este elemento específico ayuda al usuario final o al SEO.
+      4. **TONO:** Sé un mentor motivador, sabio y preciso. Usa metáforas de construcción (cimientos, vigas, ventanas).
+      5. **VERIFICACIÓN ESTRUCTURAL:** Revisa que el elemento esté dentro de la etiqueta correcta (ej: inputs dentro de forms, metas dentro de head).
 
-      ### GRADING RULES (ABSOLUTE):
-      1. **CONTEXT IS LAW:** You must ONLY evaluate based on the provided THEORY and MISSION.
-         - If the Theory mentions 'viewport', you check for it.
-         - If the Theory DOES NOT mention 'viewport' (or meta tags, or lang attributes), **YOU MUST IGNORE THEM**, even if standard HTML requires them.
-         - **Do not act like a linter.** Act like a teacher checking specifically if the student understood *this specific lesson*.
-
-      2. **ALLOW CODE FRAGMENTS (CRITICAL):**
-         - The student is allowed to write ONLY the specific tag requested.
-         - Example: If the task is "Create an H1", and the code is just "<h1>Hello</h1>" (NO <html>, NO <body>), this is **100% CORRECT**.
-         - DO NOT tell the user "You are missing the body tag" unless the Mission specifically asks for "Full Structure".
-         - Isolate the specific skill.
-
-      3. **IGNORE CONTENT:** 
-         - The student can write ANY text inside the tags. 
-         - Example: If task is "Create an <h1>", and code is "<h1>I love tacos</h1>", mark it **CORRECT**.
-         - Do not critique spelling, creativity, or text choice.
-
-      4. **FEEDBACK STYLE:**
-         - If Wrong: Point out exactly which part of the *Mission* is missing. "Te pedí un h1, pero veo un h2."
-         - If Correct: "¡Perfecto! Tal como lo aprendimos." or "¡Bien hecho! Sintaxis correcta."
-         - Language: Spanish (Friendly, encourage the user).
-
-      Return JSON.
+      RESPONDE ESTRICTAMENTE EN JSON:
+      {
+        "correct": boolean,
+        "message": "Feedback magistral explicando el qué, por qué y cómo mejorar",
+        "tips": ["Consejo pedagógico 1", "Consejo de buena práctica 2"]
+      }
     `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
@@ -67,34 +55,20 @@ export const validateCodeWithGemini = async (
           type: Type.OBJECT,
           properties: {
             correct: { type: Type.BOOLEAN },
-            message: { type: Type.STRING, description: "Feedback string." },
-            tips: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: "1-2 short hints."
-            }
+            message: { type: Type.STRING },
+            tips: { type: Type.ARRAY, items: { type: Type.STRING } }
           },
           required: ["correct", "message", "tips"]
         }
       }
     });
 
-    const jsonText = response.text;
-    if (!jsonText) throw new Error("Empty response from AI");
-
-    const result = JSON.parse(jsonText) as GeminiFeedback;
-    return result;
-
+    return JSON.parse(response.text) as GeminiFeedback;
   } catch (error) {
-    console.error("Gemini Validation Error:", error);
     return {
       correct: false,
-      message: "Error de comunicación con el núcleo de IA. Intenta de nuevo.",
-      tips: ["Verifica tu conexión"]
+      message: "Fallo en el escáner de arquitectura. Intenta re-sincronizar.",
+      tips: ["Reintenta la validación"]
     };
   }
 };
-
-export const generateIntroMessage = async (moduleTitle: string, theoryText: string): Promise<string> => {
-  return `Vamos a por el siguiente reto: ${moduleTitle}.`;
-}
