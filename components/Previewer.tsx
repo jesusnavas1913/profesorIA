@@ -5,26 +5,17 @@ interface PreviewerProps {
 }
 
 const Previewer: React.FC<PreviewerProps> = ({ code }) => {
-  // srcDoc ahora contiene únicamente el código del estudiante, sin estilos CSS personalizados.
-  // Esto permite ver la estructura "real" (User Agent Styles) que es el núcleo del curso.
+  // srcDoc ahora es el estándar más puro posible. 
+  // Sin estilos CSS, el navegador usará sus estilos por defecto (Times New Roman, márgenes base, etc.)
+  // Esto es lo que un desarrollador ve antes de aplicar diseño.
   const srcDoc = `
     <!DOCTYPE html>
     <html lang="es">
       <head>
         <meta charset="UTF-8">
-        <style>
-          /* Estilos mínimos para que no se pegue a los bordes del iframe */
-          body { 
-            padding: 20px; 
-            margin: 0; 
-            background: #fff; 
-            color: #000;
-          }
-          /* No hay estilos de diseño aquí, solo el renderizado base del navegador */
-        </style>
       </head>
-      <body>
-        ${code || '<div style="color: #999; text-align: center; margin-top: 100px; font-family: sans-serif;">La arquitectura aparecerá aquí...</div>'}
+      <body style="padding: 15px; background: white; color: black;">
+        ${code || '<div style="color: #666; text-align: center; margin-top: 50px; font-family: sans-serif;">La arquitectura real aparecerá aquí cuando escribas código...</div>'}
       </body>
     </html>
   `;

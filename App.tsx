@@ -100,7 +100,6 @@ export default function App() {
             localStorage.setItem(`cortex_profile_${username}`, JSON.stringify(profile));
         }
         localStorage.setItem(`cortex_code_${username}`, currentCode);
-        // Todos los módulos están activos para exploración libre
         setModules(prev => prev.map(m => ({ ...m, status: userState.completedModules.includes(m.id) ? ModuleStatus.COMPLETED : ModuleStatus.ACTIVE })));
     }
   }, [userState, currentCode]);
@@ -150,7 +149,7 @@ export default function App() {
     setLearningStep('practice');
     setViewMode('editor');
     setProfMood('explaining');
-    const introMsg = `Construcción en curso. ${step.title}: ${step.explanation}`;
+    const introMsg = `Iniciamos construcción real. ${step.title}: ${step.explanation}`;
     setProfMessage(introMsg);
     speakDynamic(introMsg);
   };
@@ -186,7 +185,7 @@ export default function App() {
     return (
         <div className="min-h-screen bg-dark">
              <Header onBack={() => {}} onLogout={handleLogout} xp={userState.xp} />
-             <div className="pt-24 pb-4"></div>
+             <div className="pt-20"></div>
              <Dashboard modules={modules} onSelectModule={startModule} userXp={userState.xp} />
         </div>
     );
@@ -279,7 +278,7 @@ export default function App() {
                         className="w-full h-full bg-transparent text-indigo-50 font-mono text-xs md:text-sm p-4 md:p-6 pl-12 md:pl-16 resize-none focus:outline-none leading-relaxed"
                         spellCheck={false}
                         autoFocus
-                        placeholder="Escribe aquí tu arquitectura..."
+                        placeholder="Escribe aquí tu arquitectura real..."
                     />
                   </>
                 ) : (
@@ -324,7 +323,7 @@ export default function App() {
                        }));
                      }
                    }} className="flex-grow bg-cyan-500 text-dark font-black py-4 md:py-5 rounded-xl md:rounded-2xl shadow-2xl transition-all uppercase tracking-widest text-sm md:text-lg hover:bg-cyan-400">
-                      Sincronizado. Siguiente →
+                      Arquitectura Sincronizada →
                    </button>
                 ) : (
                    <button 
@@ -332,7 +331,7 @@ export default function App() {
                     disabled={learningStep === 'verifying' || currentCode.trim() === ''}
                     className="flex-grow bg-indigo-600 hover:bg-indigo-500 disabled:opacity-20 text-white font-black py-4 md:py-5 rounded-xl md:rounded-2xl shadow-xl transition-all uppercase tracking-widest text-sm md:text-lg flex items-center justify-center gap-2 md:gap-3 active:scale-[0.98]"
                    >
-                      {learningStep === 'verifying' ? 'Analizando...' : 'Validar Arquitectura ⚡'}
+                      {learningStep === 'verifying' ? 'Analizando...' : 'Validar Estructura Real ⚡'}
                    </button>
                 )}
             </div>
